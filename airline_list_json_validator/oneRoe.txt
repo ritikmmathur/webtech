@@ -1,0 +1,26 @@
+{
+  "Mainline": {
+    "Table": {
+      "Header": {
+        "Data": [
+          "Airlinwwwwwe",
+          "IATA",
+          "Hubs",
+          "Notes",
+          "HomePageuuuu",
+          "Planuuuuue"
+        ]
+      },
+      "Row": [
+        {
+          "Airline": "",
+          "IATA": "",
+          "Hubs": "",
+          "Notes": "",
+          "HomePage": "",
+          "Plane": ""
+        }
+      ]
+    }
+  }
+}

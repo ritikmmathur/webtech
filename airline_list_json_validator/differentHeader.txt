@@ -1,0 +1,39 @@
+{
+  "Mainline": {
+    "Table": {
+      "Header": {
+        "Data": [
+          "Airlinesss",
+          "IATAsss",
+          "Hubssss",
+          "Notessss",
+          "HomePagesss",
+          "Planess"
+        ]
+      },
+      "Row": [
+        {
+          "Airline": "American Airlines",
+          "IATA": "AA",
+          "Hubs": {
+            "Hub": [
+              "Dallas/Fort Worth",
+              "Charlotte",
+              "Chicago-O'Hare",
+              "Los Angeles",
+              "Miami",
+              "New York-JFK",
+              "New York-LaGuardia",
+              "Philadelphia",
+              "Phoenix",
+              "Washington-National"
+            ]
+          },
+          "Notes": "Founded as American Airways; largest airline in the world based on airline company revenue, scheduled passenger miles flown (per year), and fleet size.",
+          "HomePage": "http://www.aa.com",
+          "Plane": "http://cs-server.usc.edu:45678/hw/hw4/American_Airlines_Boeing_777.png"
+        }
+      ]
+    }
+  }
+}
