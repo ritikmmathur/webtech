@@ -1,0 +1,1651 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Stock Exchange</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        <script src="http://momentjs.com/downloads/moment.min.js"></script>
+        <script src="http://momentjs.com/downloads/moment-timezone.min.js"></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+    
+        <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.6/css/highcharts.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+ <style type="text/css">
+          .favLink {
+            color: blue !important;
+            cursor: pointer;
+          }
+          .favLink:hover {
+            text-decoration: underline !important; 
+          }
+          .container {
+              background-color: white;
+              margin-top: 10px;
+              border-radius: 10px;
+              padding: 10px;
+          }
+          li>a, li>a:hover {
+              color: black;
+          }
+          li>a>strong, li>a>strong:hover {
+              color: black;
+              font-weight: normal !important; 
+          }
+          .dropdown-menu {
+              right: 15px;
+          }
+          .custom-select.is-valid, .form-control.is-valid, .was-validated .custom-select:valid, .was-validated .form-control:valid {
+               border: 1px solid #ced4da;
+          }
+          .custom-select.is-valid:focus, .form-control.is-valid:focus, .was-validated .custom-select:valid:focus, .was-validated .form-control:valid:focus {
+              box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+          }
+
+          .fav-list-container.ng-hide-add {
+              transition: all linear 0s;
+              -webkit-transition: all linear 0s;
+          }
+
+          .fav-list-container.ng-hide-remove{
+              transition: all linear 0.3s;
+              -webkit-transition: all linear 0.3s;
+            }
+    
+          .fav-list-container.ng-hide{
+              right:-600px;
+          }
+
+          .fav-list-container{
+              top:0;
+              right: 0;
+              position: relative;
+          }
+
+          .stock-detail-container.ng-hide-add {
+              transition: all linear 0s;
+              -webkit-transition: all linear 0s;
+          }
+
+          .stock-detail-container.ng-hide-remove{
+              transition: all linear 0.3s;
+              -webkit-transition: all linear 0.3s;
+          }
+          
+          .stock-detail-container.ng-hide{
+              left:-600px;
+          }
+          
+          .stock-detail-container{
+              top:0;
+              position: relative;
+              left: 0;
+          }
+
+        </style>
+        <script type="text/javascript">
+
+              window.fbAsyncInit = function() {
+    FB.init({
+      appId: 195025064377023,
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.11'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+              (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                  var form = document.getElementById('needs-validation');
+                  form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                  }, false);
+                }, false);
+              })();
+
+              var app = angular.module('stock', ['ui.bootstrap','ngAnimate']);
+
+              app.config(['$qProvider', function ($qProvider) {
+                  $qProvider.errorOnUnhandledRejections(false);
+              }]);
+              var emptyList = [];
+              localStorage.setItem("favList", JSON.stringify(emptyList));
+
+              app.controller('stock-controller', function($scope,$http, $interval) {
+                  
+                  $scope.autoCompleteData = [];
+                  $scope.disableOrderBy = true;
+                  $scope.sortBy = "0";
+                  $scope.orderBy = "0";
+
+                  $scope.disableSymbol = true;
+                  $scope.displayFavoriteSection = true;
+                  $scope.displayStockDetailSection = false;
+                  $scope.favList = [];
+                  $scope.invalid = true;
+                  $scope.error_message = "Please enter stock ticker symbol.";
+                  $scope.stockDetail = {};
+                  $scope.stockDetail.displayStockDetail=false;
+                  $scope.stockDetail.displayPriceDetail=false;
+                  $scope.stockDetail.displayEMADetail=false;
+                  $scope.stockDetail.displaySMADetail=false;
+                  $scope.stockDetail.displaySTOCHDetail=false;
+                  $scope.stockDetail.displayRSIDetail=false;
+                  $scope.stockDetail.displayADXDetail=false;
+                  $scope.stockDetail.displayCCIDetail=false;
+                  $scope.stockDetail.displayBBANDSDetail=false;
+                  $scope.stockDetail.displayMACDDetail=false;
+                  $scope.stockDetail.displayHistoricChartDetail=false;
+                  $scope.stockDetail.displayNewsDetail=false;
+
+                  $scope.stockDetail.displayStockProgress=false;
+                  $scope.stockDetail.displayPriceProgress=false;
+                  $scope.stockDetail.displayEMAProgress=false;
+                  $scope.stockDetail.displaySMAProgress=false;
+                  $scope.stockDetail.displaySTOCHProgress=false;
+                  $scope.stockDetail.displayRSIProgress=false;
+                  $scope.stockDetail.displayADXProgress=false;
+                  $scope.stockDetail.displayCCIProgress=false;
+                  $scope.stockDetail.displayBBANDSProgress=false;
+                  $scope.stockDetail.displayMACDProgress=false;
+                  $scope.stockDetail.displayHistoricChartProgress=false;
+                  $scope.stockDetail.displayNewsProgress=false;
+
+                  $scope.stockDetail.displayStockError=false;
+                  $scope.stockDetail.displayPriceError=false;
+                  $scope.stockDetail.displayEMAError=false;
+                  $scope.stockDetail.displaySMAError=false;
+                  $scope.stockDetail.displaySTOCHError=false;
+                  $scope.stockDetail.displayRSIError=false;
+                  $scope.stockDetail.displayADXError=false;
+                  $scope.stockDetail.displayCCIError=false;
+                  $scope.stockDetail.displayBBANDSError=false;
+                  $scope.stockDetail.displayMACDError=false;
+                  $scope.stockDetail.displayHistoricChartError=false;
+                  $scope.stockDetail.displayNewsError=false;
+
+                  $scope.stockDetail.currentStock={};
+
+                  $scope.menuItems = ['Price', 'SMA', 'EMA', 'STOCH', 'RSI', 'ADX', 'CCI', 'BBANDS', 'MACD'];
+                  $scope.activeMenu = $scope.menuItems[0];
+                  $scope.currChartData = "";
+
+                  $scope.setActive = function(menuItem) {
+                      $scope.activeMenu = menuItem;
+                      if(menuItem == 'Price') {
+                          $scope.currChartData = $scope.chartOptionsPrice;
+                      } else if(menuItem == 'SMA') {
+                          $scope.currChartData = $scope.chartOptionsSMA;
+                      } else if(menuItem == 'EMA') {
+                          $scope.currChartData = $scope.chartOptionsEMA;
+                      } else if(menuItem == 'STOCH') {
+                          $scope.currChartData = $scope.chartOptionsSTOCH;
+                      } else if(menuItem == 'RSI') {
+                          $scope.currChartData = $scope.chartOptionsRSI;
+                      } else if(menuItem == 'ADX') {
+                          $scope.currChartData = $scope.chartOptionsADX;
+                      } else if(menuItem == 'CCI') {
+                          $scope.currChartData = $scope.chartOptionsCCI;
+                      } else if(menuItem == 'BBANDS') {
+                          $scope.currChartData = $scope.chartOptionsBBANDS;
+                      } else if(menuItem == 'MACD') {
+                          $scope.currChartData = $scope.chartOptionsMACD;
+                      }
+                  }
+
+                  $scope.getLineChart1Option = function(title, yTitle, keys, values, symbol){
+                    return {
+                           title: {
+                              text: title,
+                            },
+                            subtitle: {
+                                text: '<a style="color:blue;" href=" https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>',
+                            },
+                            yAxis: {
+                                title: {
+                                    text: yTitle,
+                                }
+                            },
+                            legend: {
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+                            xAxis: {
+                                categories: keys,
+                                tickInterval:5,
+                                labels: {
+                                    style: {
+                                        fontSize: '8px'
+                                    }
+                                }
+                            },
+                            plotOptions: {
+                                series: {
+                                    marker: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: symbol,
+                                data: values,
+                                type: 'line'
+                            }],
+                            responsive: {
+                                rules: [{
+                                  condition: {
+                                   // maxWidth: 500
+                                  },
+                                  chartOptions: {
+                                    legend: {
+                                      layout: 'horizontal',
+                                      align: 'center',
+                                      verticalAlign: 'bottom'
+                                    }
+                                  }
+                                }]
+                              }
+                          }
+                        }
+
+                  $scope.getLineChart3Option = function(title, yTitle, keys, values1, values2, values3, line1, line2, line3){
+                    return {
+                           title: {
+                              text: title,
+                            },
+                            subtitle: {
+                                text: '<a style="color:blue;" target="_blank" href=" https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+                            },
+                            yAxis: {
+                                title: {
+                                    text: yTitle,
+                                }
+                            },
+                            legend: {
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+                            xAxis: {
+                                categories: keys,
+                                tickInterval:5,
+                                labels: {
+                                    style: {
+                                        fontSize: '8px'
+                                    }
+                                }
+                            },
+                            plotOptions: {
+                                series: {
+                                    marker: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: line1,
+                                data: values1,
+                                //type: 'line'
+                            }, {
+                                name: line2,
+                                data: values2,
+                                //type: 'line'
+                            }, {
+                                name: line3,
+                                data: values3,
+                                //type: 'line'
+                            }
+                            ],
+                            responsive: {
+                                rules: [{
+                                    condition: {
+                                        //maxWidth: 500
+                                    },
+                                    chartOptions: {
+                                        legend: {
+                                            layout: 'horizontal',
+                                            align: 'center',
+                                            verticalAlign: 'bottom'
+                                        }
+                                    }
+                                }]
+                            }
+                          }
+                        }
+                  
+                  $scope.getPriceVolumeOption = function(title, keys, value1, value2, symbol) {
+                    return {
+                          title: {
+                              text: title,
+                          },
+                          subtitle: {
+                              text: '<a style="color:blue;" target="_blank" href=" https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>'
+                          },
+                          xAxis: [{
+                              categories: keys,
+                              tickInterval: 5,
+                              labels: {
+                                  style: {
+                                      fontSize: '8px'
+                                  }
+                              }
+                          }],
+                          yAxis: [{ // Primary yAxis
+                              labels: {
+                                  format: '{value}',
+                              },
+                              title: {
+                                  text: 'Stock Price',
+                              },
+                          }, { // Secondary yAxis
+                              title: {
+                                  text: 'Volume',
+                              },
+                              opposite: true
+                          }],
+                          legend: {
+                             layout: 'horizontal',
+                              align: 'center',
+                              verticalAlign: 'bottom'
+                          },
+                          /**plotOptions: {
+                                  series: {
+                                      pointPadding: 0,
+                                      groupPadding: 0.5,
+                                  },
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          }
+                                      },
+                                },
+                                column : {
+                                   borderColor: 'red'
+                                }
+                          },**/
+                          series: [{
+                              name: "Price",
+                              type: 'area',
+                              color: 'red',
+                              data: value1,
+                              tooltip: {
+                                  valueSuffix: ''
+                              }
+                          },
+                          {
+                              name: ' Volume',
+                              type: 'column',
+                              color: 'white',
+                              yAxis: 1,
+                              data: value2,
+                              tooltip: {
+                                  valueSuffix: ' M'
+                              }
+
+                          }]
+                      }
+                  }
+
+                  $scope.getLineChart2Option = function(title, yTitle, keys, values1, values2, line1, line2){
+                    return {
+                           title: {
+                              text: title,
+                            },
+                            subtitle: {
+                                text: '<a style="color:blue;" target="_blank" href=" https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+                            },
+                            yAxis: {
+                                title: {
+                                    text: yTitle,
+                                }
+                            },
+                            legend: {
+                                layout: 'vertical',
+                                align: 'right',
+                                verticalAlign: 'middle'
+                            },
+                            xAxis: {
+                                categories: keys,
+                                tickInterval:5,
+                                labels: {
+                                    style: {
+                                        fontSize: '8px'
+                                    }
+                                }
+                            },
+                            plotOptions: {
+                                series: {
+                                    marker: {
+                                        enabled: true
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: line1,
+                                data: values1,
+                                //type: 'line'
+                            }, {
+                                name: line2,
+                                data: values2,
+                                //type: 'line'
+                            }],
+                            responsive: {
+                                rules: [{
+                                    condition: {
+                                        //maxWidth: 500
+                                    },
+                                    chartOptions: {
+                                        legend: {
+                                            layout: 'horizontal',
+                                            align: 'center',
+                                            verticalAlign: 'bottom'
+                                        }
+                                    }
+                                }]
+                            }
+                          }
+                        }
+
+                  $scope.getKeyValueHighChartPair = function(json, key1, key2) {
+                      var keyList = [];
+                      var valueList = [];
+                      var index = 0;
+                      angular.forEach(json[key1], function(value, key) {
+                          if(index < 121) {
+                              keyList.push(moment(key).format('MM/DD'));
+                              valueList.push(Math.round(value[key2] * 100) / 100);
+                          }
+                          index++;
+                      });
+                      var keyListRev = [];
+                      var valueListRev = [];
+                      for(index = 120; index>=0 ; index--) {
+                          keyListRev.push(keyList[index]);
+                          valueListRev.push(valueList[index]);
+                      }
+                      return {
+                        key : keyListRev,
+                        value : valueListRev,
+                      };
+                  };
+
+                  $scope.getKeyValueHighChartPairForPriceVolume = function(json, key1, key2) {
+                      var keyList = [];
+                      var valueList = [];
+                      var index = 0;
+                      angular.forEach(json[key1], function(value, key) {
+                          if(index < 121) {
+                              keyList.push(moment(key).format('MM/DD'));
+                              valueList.push(Math.round(value[key2] * 100) / 100);
+                          }
+                          index++;
+                      });
+                      var keyListRev = [];
+                      var valueListRev = [];
+                      for(index = 120; index>=0 ; index--) {
+                          keyListRev.push(keyList[index]);
+                          valueListRev.push(valueList[index]);
+                      }
+                      return {
+                        key : keyListRev,
+                        value : valueListRev,
+                      };
+                  };
+
+
+                  $scope.getKeyValueHistoricData = function(json, key1, key2) {
+                    var data = [];
+                    var index =0;
+                    var keyList = [];
+                    angular.forEach(json[key1], function(value, key) {
+                          keyList.push(key);
+                          index++;
+                      });
+                    
+                    for(index=keyList.length-1;index>=0;index--) {
+                          var temp = [];
+                          temp.push(moment(keyList[index]).valueOf());
+                          temp.push(Math.round(json[key1][keyList[index]][key2]*100)/100);
+                          data.push(temp);
+                    }
+                    return data;
+
+                  }
+
+                  $scope.getHistoricalData = function(data, symbol) {
+                    return {
+                          rangeSelector: {
+                              selected: 1
+                          },
+                          title: {
+                              text: symbol + ' Stock Price'
+                          },
+                          subtitle: {
+                                text: '<a style="color:blue;" target="_blank" href=" https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+                            },
+                          tooltip: {
+                              split: false,
+                          },
+                          series: [{
+                              name: symbol,
+                              data: data,
+                               type: 'area',
+                               tooltip: {
+                                  valueDecimals: 2,
+                              }
+                          }],
+                          responsive: {
+                                rules: [{
+                                    condition: {
+                                        //maxWidth: 500
+                                    },
+                                    chartOptions: {
+                                        legend: {
+                                            layout: 'horizontal',
+                                            align: 'center',
+                                            verticalAlign: 'bottom'
+                                        }
+                                    }
+                                }]
+                            }
+                      }
+                  }
+
+                  $scope.displayFavoriteList = function() {
+                      $scope.displayFavoriteSection = true;
+                      $scope.displayStockDetailSection = false;
+                      $scope.disableOrderBy = true;
+                      $scope.sortBy = "0";
+                      $scope.orderBy = "0";
+                  }
+
+                  $scope.displayStockDetal = function() {
+                      $scope.displayFavoriteSection = false;
+                      $scope.displayStockDetailSection = true;
+                  }
+
+                  $scope.loadStockDetail = function(symbol) {
+                      $scope.stockDetail.disableStar = true;
+                      $scope.stockDetail.disableFb = true;
+                      $scope.stockDetail.displayStockDetail=false;
+                      $scope.stockDetail.displayPriceDetail=false;
+                      $scope.stockDetail.displayEMADetail=false;
+                      $scope.stockDetail.displaySMADetail=false;
+                      $scope.stockDetail.displaySTOCHDetail=false;
+                      $scope.stockDetail.displayRSIDetail=false;
+                      $scope.stockDetail.displayADXDetail=false;
+                      $scope.stockDetail.displayCCIDetail=false;
+                      $scope.stockDetail.displayBBANDSDetail=false;
+                      $scope.stockDetail.displayMACDDetail=false;
+                      $scope.stockDetail.displayHistoricChartDetail=false;
+                      $scope.stockDetail.displayNewsDetail=false;
+
+                      $scope.stockDetail.displayStockProgress=true;
+                      $scope.stockDetail.displayPriceProgress=true;
+                      $scope.stockDetail.displayEMAProgress=true;
+                      $scope.stockDetail.displaySMAProgress=true;
+                      $scope.stockDetail.displaySTOCHProgress=true;
+                      $scope.stockDetail.displayRSIProgress=true;
+                      $scope.stockDetail.displayADXProgress=true;
+                      $scope.stockDetail.displayCCIProgress=true;
+                      $scope.stockDetail.displayBBANDSProgress=true;
+                      $scope.stockDetail.displayMACDProgress=true;
+                      $scope.stockDetail.displayHistoricChartProgress=true;
+                      $scope.stockDetail.displayNewsProgress=true;
+
+                      $scope.stockDetail.displayStockError=false;
+                      $scope.stockDetail.displayPriceError=false;
+                      $scope.stockDetail.displayEMAError=false;
+                      $scope.stockDetail.displaySMAError=false;
+                      $scope.stockDetail.displaySTOCHError=false;
+                      $scope.stockDetail.displayRSIError=false;
+                      $scope.stockDetail.displayADXError=false;
+                      $scope.stockDetail.displayCCIError=false;
+                      $scope.stockDetail.displayBBANDSError=false;
+                      $scope.stockDetail.displayMACDError=false;
+                      $scope.stockDetail.displayHistoricChartError=false;
+                      $scope.stockDetail.displayNewsError=false;
+                      $scope.stockDetail.currentStock.item = {
+                        isFavorite:false,
+                      };
+
+                      if(symbol == undefined || symbol.trim() == "" || symbol == null){
+                          $scope.invalid = true;
+                          $scope.error_message = "Please enter stock ticker symbol.";
+                          return;
+                      }
+                      symbol = symbol.trim();
+
+                      $scope.displayStockDetailSection = true;
+                      $scope.displayFavoriteSection = false;
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/SMA").then(function(response) {
+                          $scope.stockDetail.displaySMADetail=true;
+                          $scope.stockDetail.displaySMAProgress = false;
+                          try{
+                            if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                $scope.stockDetail.displaySMAError=true;
+                                $scope.stockDetail.displaySMADetail=false;
+                                return;
+                            }
+                            var json = response.data;
+                            var data = $scope.getKeyValueHighChartPair(json, "Technical Analysis: SMA", "SMA");
+                            $scope.chartOptionsSMA = $scope.getLineChart1Option(json["Meta Data"]["2: Indicator"], "SMA", data.key, data.value, symbol);
+                          } catch(e) {
+                            $scope.stockDetail.displaySMAError=true;
+                            $scope.stockDetail.displaySMADetail=false;
+                            $scope.stockDetail.displaySMAProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displaySMAError=true;
+                          $scope.stockDetail.displaySMADetail=false;
+                          $scope.stockDetail.displaySMAProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/EMA").then(function(response) {
+                          $scope.stockDetail.displayEMADetail=true;
+                          $scope.stockDetail.displayEMAProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayEMAError=true;
+                                  $scope.stockDetail.displayEMADetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data = $scope.getKeyValueHighChartPair(json, "Technical Analysis: EMA", "EMA");
+                              $scope.chartOptionsEMA = $scope.getLineChart1Option(json["Meta Data"]["2: Indicator"], "EMA", data.key, data.value, symbol);
+                          } catch(e) {
+                              $scope.stockDetail.displayEMAError=true;
+                              $scope.stockDetail.displayEMADetail=false;
+                              $scope.stockDetail.displayEMAProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayEMAError=true;
+                          $scope.stockDetail.displayEMADetail=false;
+                          $scope.stockDetail.displayEMAProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/RSI").then(function(response) {
+                          $scope.stockDetail.displayRSIDetail=true;
+                          $scope.stockDetail.displayRSIProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayRSIError=true;
+                                  $scope.stockDetail.displayRSIDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data = $scope.getKeyValueHighChartPair(json, "Technical Analysis: RSI", "RSI");
+                              $scope.chartOptionsRSI = $scope.getLineChart1Option(json["Meta Data"]["2: Indicator"], "RSI", data.key, data.value, symbol);
+                          }catch(e) {
+                              $scope.stockDetail.displayRSIError=true;
+                              $scope.stockDetail.displayRSIDetail=false;
+                              $scope.stockDetail.displayRSIProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayRSIError=true;
+                          $scope.stockDetail.displayRSIDetail=false;
+                          $scope.stockDetail.displayRSIProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/ADX").then(function(response) {
+                          $scope.stockDetail.displayADXDetail=true;
+                          $scope.stockDetail.displayADXProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayADXError=true;
+                                  $scope.stockDetail.displayADXDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data = $scope.getKeyValueHighChartPair(json, "Technical Analysis: ADX", "ADX");
+                              $scope.chartOptionsADX = $scope.getLineChart1Option(json["Meta Data"]["2: Indicator"], "ADX", data.key, data.value, symbol);
+                          }catch(e){
+                              $scope.stockDetail.displayADXError=true;
+                              $scope.stockDetail.displayADXDetail=false;
+                              $scope.stockDetail.displayADXProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayADXError=true;
+                          $scope.stockDetail.displayADXDetail=false;
+                          $scope.stockDetail.displayADXProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/CCI").then(function(response) {
+                          $scope.stockDetail.displayCCIDetail=true;
+                          $scope.stockDetail.displayCCIProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayCCIError=true;
+                                  $scope.stockDetail.displayCCIDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data = $scope.getKeyValueHighChartPair(json, "Technical Analysis: CCI", "CCI");
+                              $scope.chartOptionsCCI = $scope.getLineChart1Option(json["Meta Data"]["2: Indicator"], "CCI", data.key, data.value, symbol);
+                          } catch(e) {
+                            $scope.stockDetail.displayCCIError=true;
+                            $scope.stockDetail.displayCCIDetail=false;
+                            $scope.stockDetail.displayCCIProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayCCIError=true;
+                          $scope.stockDetail.displayCCIDetail=false;
+                          $scope.stockDetail.displayCCIProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/MACD").then(function(response) {
+                          $scope.stockDetail.displayMACDDetail=true;
+                          $scope.stockDetail.displayMACDProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayMACDError=true;
+                                  $scope.stockDetail.displayMACDDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data1 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: MACD", "MACD");
+                              var data2 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: MACD", "MACD_Hist");
+                              var data3 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: MACD", "MACD_Signal");
+                              $scope.chartOptionsMACD = $scope.getLineChart3Option(json["Meta Data"]["2: Indicator"], "MACD", data1.key, data1.value, data2.value, data3.value,  symbol+ " MACD",  symbol+ " MACD_Hist",  symbol+" MACD_Signal");
+                          } catch(e) {
+                              $scope.stockDetail.displayMACDError=true;
+                              $scope.stockDetail.displayMACDDetail=false;
+                              $scope.stockDetail.displayMACDProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayMACDError=true;
+                          $scope.stockDetail.displayMACDDetail=false;
+                          $scope.stockDetail.displayMACDProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/BBANDS").then(function(response) {
+                          $scope.stockDetail.displayBBANDSDetail=true;
+                          $scope.stockDetail.displayBBANDSProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayBBANDSError=true;
+                                  $scope.stockDetail.displayBBANDSDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data1 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: BBANDS", "Real Lower Band");
+                              var data2 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: BBANDS", "Real Middle Band");
+                              var data3 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: BBANDS", "Real Upper Band");
+                              $scope.chartOptionsBBANDS = $scope.getLineChart3Option(json["Meta Data"]["2: Indicator"], "BBANDS", data1.key, data1.value, data2.value, data3.value,  symbol+ " Real Lower Band",  symbol+ " Real Middle Band",  symbol+" Real Upper Band");
+                          } catch(e){
+                              $scope.stockDetail.displayBBANDSError=true;
+                              $scope.stockDetail.displayBBANDSDetail=false;
+                              $scope.stockDetail.displayBBANDSProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayBBANDSError=true;
+                          $scope.stockDetail.displayBBANDSDetail=false;
+                          $scope.stockDetail.displayBBANDSProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol+"/indicator/STOCH").then(function(response) {
+                          $scope.stockDetail.displaySTOCHDetail=true;
+                          $scope.stockDetail.displaySTOCHProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displaySTOCHError=true;
+                                  $scope.stockDetail.displaySTOCHDetail=false;
+                                  return;
+                              }
+                              var json = response.data;
+                              var data1 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: STOCH", "SlowD");
+                              var data2 = $scope.getKeyValueHighChartPair(json, "Technical Analysis: STOCH", "SlowK");
+                              $scope.chartOptionsSTOCH = $scope.getLineChart3Option(json["Meta Data"]["2: Indicator"], "BBANDS", data1.key, data1.value, data2.value, symbol+ " SlowD",  symbol+ " SlowK");
+                          } catch(e){
+                              $scope.stockDetail.displaySTOCHError=true;
+                              $scope.stockDetail.displaySTOCHDetail=false;
+                              $scope.stockDetail.displaySTOCHProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displaySTOCHError=true;
+                          $scope.stockDetail.displaySTOCHDetail=false;
+                          $scope.stockDetail.displaySTOCHProgress = false;
+                      });
+
+                      $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/news/"+symbol).then(function(response) {
+                          $scope.stockDetail.displayNewsDetail=true;
+                          $scope.stockDetail.displayNewsProgress = false;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayNewsError=true;
+                                  $scope.stockDetail.displayNewsDetail=false;
+                                  return;
+                              }
+                              var itemList = response.data['rss']['channel']['0']['item'];
+                              var list = [];
+                              for(var index =0; index<5; index++){
+                                var item = {};
+                                item.title = itemList[index]['title'][0];
+                                item.link = itemList[index]['link'][0];
+                                item.pubDate = itemList[index]['pubDate'][0].substring(0, itemList[index]['pubDate'][0].length-5);
+                                item.author = itemList[index]['sa:author_name'][0];
+                                list.push(item);
+                              }
+                              $scope.stockDetail.newsList = list;
+                          } catch(e){
+                              $scope.stockDetail.displayNewsError=true;
+                              $scope.stockDetail.displayNewsDetail=false;
+                              $scope.stockDetail.displayNewsProgress = false;
+                          }
+                      }, function(error) {
+                          $scope.stockDetail.displayNewsError=true;
+                          $scope.stockDetail.displayNewsDetail=false;
+                          $scope.stockDetail.displayNewsProgress = false;
+                      });
+
+                     $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+symbol).then(function (response) {
+                         
+                          $scope.stockDetail.displayStockDetail=true;
+                          $scope.stockDetail.displayPriceDetail=true;
+                          $scope.stockDetail.displayPriceProgress = false;
+                          $scope.stockDetail.displayStockProgress = false;
+                          $scope.stockDetail.displayHistoricChartProgress = false;
+                          $scope.stockDetail.displayHistoricChartDetail = true;
+                          try{
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  $scope.stockDetail.displayStockError=true;
+                                  $scope.stockDetail.displayStockDetail=false;
+                                  $scope.stockDetail.displayStockProgress = false;
+                                  $scope.stockDetail.displayPriceError=true;
+                                  $scope.stockDetail.displayPriceDetail=false;
+                                  $scope.stockDetail.displayPriceProgress=false;
+                                  $scope.stockDetail.displayHistoricChartProgress = false;
+                                  $scope.stockDetail.displayHistoricChartError = true;
+                                  $scope.stockDetail.displayHistoricChartDetail = false;
+                                  return;
+                              }
+
+                              var json = response.data;
+                              var data1 = $scope.getKeyValueHighChartPairForPriceVolume(json, "Time Series (Daily)", "4. close");
+                              var data2 = $scope.getKeyValueHighChartPairForPriceVolume(json, "Time Series (Daily)", "5. volume");
+
+                              $scope.chartOptionsHistoricChart = $scope.getHistoricalData($scope.getKeyValueHistoricData(json, "Time Series (Daily)", "4. close"), symbol);
+
+                              $scope.chartOptionsPrice = $scope.getPriceVolumeOption("Stock Price ("+moment(json['Meta Data']['3. Last Refreshed']).format('MM/DD/YYYY')+")", data1.key, data1.value, data2.value, symbol);
+
+                              $scope.activeMenu = $scope.menuItems[0];
+                              $scope.currChartData = $scope.chartOptionsPrice;
+
+                              var keyList = [];
+                              for(var key in json['Time Series (Daily)']){
+                                keyList.push(key);
+                              }
+                              var key1 = keyList[0];
+                              var key2 = keyList[1];
+                              var change = json['Time Series (Daily)'][key1]['4. close'] - json['Time Series (Daily)'][key2]['4. close'];
+                              var changePercent = change /json['Time Series (Daily)'][key1]['4. close'] * 100;
+                              var color, url;
+                              if(change>=0) {
+                                  color = "green";
+                                  url = "http://cs-server.usc.edu:45678/hw/hw8/images/Up.png";
+                              } else {
+                                  color = "red";
+                                  url = "http://cs-server.usc.edu:45678/hw/hw8/images/Down.png";
+                              }
+                              $scope.stockDetail.currentStock.item = {
+                                "symbol": $scope.symbol,
+                                "price": json['Time Series (Daily)'][key1]['4. close'],
+                                "lastPrice": json['Time Series (Daily)'][key1]['4. close'],
+                                "timestamp": json['Meta Data']['3. Last Refreshed'],
+                                "change": change,
+                                "changePercent" : changePercent,
+                                "open": json['Time Series (Daily)'][key1]['1. open'],
+                                "close": json['Time Series (Daily)'][key1]['4. close'],
+                                "volume": json['Time Series (Daily)'][key1]['5. volume'],
+                                "rangeStart": json['Time Series (Daily)'][key1]['3. low'],
+                                "rangeClose": json['Time Series (Daily)'][key1]['2. high'],
+                                "url": url,
+                                "color": color,
+                                "isFavorite": false,
+                              }
+                              $scope.stockDetail.disableStar = false;
+                              $scope.stockDetail.disableFb = false;
+                          } catch(e){
+                              $scope.stockDetail.displayStockError=true;
+                              $scope.stockDetail.displayStockDetail=false;
+                              $scope.stockDetail.displayStockProgress = false;
+                              $scope.stockDetail.displayPriceError=true;
+                              $scope.stockDetail.displayPriceDetail=false;
+                              $scope.stockDetail.displayPriceProgress = false;
+                              $scope.stockDetail.displayHistoricChartProgress = false;
+                              $scope.stockDetail.displayHistoricChartError = true;
+                              $scope.stockDetail.displayHistoricChartDetail = false;
+                          }
+                          
+                     }, function(error) {
+                          $scope.stockDetail.displayStockError=true;
+                          $scope.stockDetail.displayStockDetail=false;
+                          $scope.stockDetail.displayStockProgress = false;
+                          $scope.stockDetail.displayPriceError=true;
+                          $scope.stockDetail.displayPriceDetail=false;
+                          $scope.stockDetail.displayPriceProgress = false;
+                          $scope.stockDetail.displayHistoricChartProgress = false;
+                          $scope.stockDetail.displayHistoricChartError = true;
+                          $scope.stockDetail.displayHistoricChartDetail = false;
+                      });
+                  }
+                  
+                  $scope.submit = function(){
+                      $scope.loadStockDetail($scope.symbol);    
+                  }
+
+                  $scope.addFavItem = function(item){
+                    item.isFavorite = true;
+                    $scope.stockDetail.currentStock.item.isFavorite = true;
+                    var list = JSON.parse(localStorage.getItem("favList"));
+                    list.push({item});
+                    localStorage.setItem("favList", JSON.stringify(list));
+                    $scope.favList = list;
+                    $scope.stockDetail.disableStar = false;
+                    $scope.stockDetail.disableFb = false;
+                  }
+
+                  $scope.deleteFavItem = function(item){
+                    var newFavList = [];
+                    var index = 0;
+                    var symbol = item.symbol || item;
+                    var list = JSON.parse(localStorage.getItem("favList"));
+                    angular.forEach(list, function(value, key) {
+                        if(value.item.symbol != symbol){
+                            newFavList[index] = value;
+                            index++;
+                        }
+                      });
+                    $scope.favList = newFavList;
+                    localStorage.setItem("favList", JSON.stringify(newFavList));
+                    $scope.stockDetail.currentStock.item.isFavorite = false;
+                  }
+
+                  $scope.onSymbolChange = function(){
+                      $scope.error_message = "Please enter stock ticker symbol.";
+                      if($scope.symbol != undefined) {
+                          if($scope.symbol != $scope.symbol.trim()) {
+                              $('#symbol').css({"border-color": "red","box-shadow":"none"});
+                              $scope.invalid = true;
+                          } else {
+                              $scope.invalid = false;
+                              $('#symbol').css({"border-color": "lightblue","box-shadow":"none"});
+                              $('#symbol').focus();
+                          }
+                      } else {
+                          $('#symbol').css({"border-color": "red","box-shadow":"none"});
+                          $scope.invalid = true;
+                      }
+                  }
+                 
+                  $scope.searchAutoCompleteSymbol = function($viewValue) {
+                    $scope.symbol = $scope.symbol.trim();
+                    if($scope.symbol == ""){
+                        return;
+                    }
+
+                    $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/list/"+$scope.symbol).then(function(response) {
+                      var json = response.data;
+                      var symbols = []; 
+                      var index;
+                      if (json.length > 1)
+                      {
+                          for (index = 0; index < json.length; index++)
+                          {
+                            var tmp = {
+                              "Name": json[index].Symbol + " - " + json[index].Name + " ( " + json[index].Exchange + " ) ",
+                              "Symbol": json[index].Symbol,
+                            }
+                            symbols[index] = tmp;
+                          }
+                          $scope.autoCompleteData = symbols;
+                      }
+                    });
+                    return $scope.autoCompleteData;
+                  }
+
+                  $scope.clear = function(form) {
+                      $scope.symbol = "";
+                      $('#symbol').css({"border-color": "lightblue", "box-shadow":"none"});
+                      $('#symbol').focus();
+                      $scope.invalid = true;
+                      $scope.error_message = "";
+                      $scope.displayFavoriteList();
+                  }
+
+                  $scope.onSelectAutoComplete = function($item) {
+                      $scope.symbol = $item.Symbol;
+                  }
+
+                  $scope.onRefresh = function() {
+                      var favList = JSON.parse(localStorage.getItem("favList"));
+                      var newList = favList;
+                      $scope.disableOrderBy = true;
+                      $scope.sortBy = "0";
+                      $scope.orderBy = "0";
+                      $scope.map = {};
+                      for(var index=0; index<favList.length; index++) {
+                          
+                          var itemCurr = favList[index].item;
+                          $scope.map[itemCurr.symbol] = index;
+
+                          $http.get("http://hw8-env.us-east-1.elasticbeanstalk.com/symbol/"+itemCurr.symbol).then(function (response) {
+                              if(response.status/100 == 5 || response.data["error"] != undefined || response.data["error"] != null || response.data["Error Message"] != undefined || response.data["Error Message"] != null) {
+                                  newList.push({item});
+                                  return;
+                              }
+                              var json = response.data;
+                               var keyList = [];
+                                for(var key in json['Time Series (Daily)']){
+                                  keyList.push(key);
+                                }
+                              
+                              var key1 = keyList[0];
+                              var key2 = keyList[1];
+                              var change = json['Time Series (Daily)'][key1]['4. close'] - json['Time Series (Daily)'][key2]['4. close'];
+                              var changePercent = change /json['Time Series (Daily)'][key1]['4. close'] * 100;
+                              var color, url;
+                              if(change>=0) {
+                                  color = "green";
+                                  url = "http://cs-server.usc.edu:45678/hw/hw8/images/Up.png";
+                              } else {
+                                  color = "red";
+                                  url = "http://cs-server.usc.edu:45678/hw/hw8/images/Down.png";
+                              }
+                              item = {
+                                "symbol": json['Meta Data']['2. Symbol'],
+                                "price": json['Time Series (Daily)'][key1]['4. close'],
+                                "lastPrice": json['Time Series (Daily)'][key1]['4. close'],
+                                "timestamp": json['Meta Data']['3. Last Refreshed'],
+                                "change": change,
+                                "changePercent" : changePercent,
+                                "open": json['Time Series (Daily)'][key1]['1. open'],
+                                "close": json['Time Series (Daily)'][key1]['4. close'],
+                                "volume": json['Time Series (Daily)'][key1]['5. volume'],
+                                "rangeStart": json['Time Series (Daily)'][key1]['3. low'],
+                                "rangeClose": json['Time Series (Daily)'][key1]['2. high'],
+                                "url": url,
+                                "color": color,
+                                "isFavorite": false,
+                              };
+                              newList[$scope.map[json['Meta Data']['2. Symbol']]] = {'item':item};   
+                              localStorage.setItem("favList", JSON.stringify(newList));   
+                              $scope.favList = newList; 
+                          }, function(error) {
+                              /**newList[map[itemCurr.symbol]] = {'item':itemCurr}; 
+                              localStorage.setItem("favList", JSON.stringify(newList));   
+                              $scope.favList = newList; **/
+                          });
+                      }
+                  }
+
+                  $scope.onFaceBookShare = function() {
+
+                  var data = {
+                      options: $scope.currChartData,
+                      type: 'image/png',
+                      async: true
+                  };
+
+                  var exportUrl = 'http://export.highcharts.com/';
+
+                  $http.post(exportUrl, data).then(function(data) {
+                      var url = exportUrl + data.data;
+                      FB.ui({ 
+                          method: 'feed', 
+                          picture:  url,
+                          name: "Sample",
+                          caption: "Sample"
+                      },  (response)  =>  { 
+                          if  (response &&  !response.error_message)  { 
+                                  console.log("success");
+                          } else  { 
+                                  console.log("Failed");
+                          } 
+                      });
+                  });
+                }
+
+                  var timeout, delay = 5000;
+                  $scope.autoRefresh = false;
+                  $scope.autoRefreshStatus = false;
+                  $scope.onAutoRefresh = function() {
+                      if($scope.autoRefreshStatus){
+                        $scope.autoRefreshStatus = false;
+                        $scope.autoRefresh = true;
+                        if(angular.isDefined(timeout)) {
+                          $interval.cancel(timeout);
+                          timeout = undefined;
+                        }
+                      } else {
+                        $scope.autoRefresh = false;
+                        $scope.autoRefreshStatus = true;
+                         if(!angular.isDefined(timeout)) {
+                          timeout = $interval(function() {
+                              $scope.onRefresh();
+                          }, delay);
+                        }
+                      }
+                     
+                  }
+
+                  $scope.onSortByChange = function() {
+                      var sortBy = $scope.sortBy;
+                      var orderBy = $scope.orderBy;
+                      var favList = JSON.parse(localStorage.getItem("favList"));
+                      var asc = (orderBy == "0") ? true : false;
+                      if(sortBy == "0") {
+                          $scope.favList = favList;
+                          $scope.orderBy = "0";
+                          $scope.disableOrderBy = true;
+                      } else if(sortBy == "1") {
+                          $scope.disableOrderBy = false;
+                          $scope.favList = $scope.sortFavList(favList, "symbol",asc);
+                      } else if(sortBy == "2") {
+                          $scope.disableOrderBy = false;
+                          $scope.favList = $scope.sortFavList(favList, "close",asc);
+                      } else if(sortBy == "3") {
+                          $scope.disableOrderBy = false;
+                          $scope.favList = $scope.sortFavList(favList, "change",asc);
+                      } else if(sortBy == "4") {
+                          $scope.disableOrderBy = false;
+                          $scope.favList = $scope.sortFavList(favList, "changePercent",asc);
+                      } else if(sortBy == "5") {
+                          $scope.disableOrderBy = false;
+                          $scope.favList = $scope.sortFavList(favList, "volume",asc);
+                      }
+                  }
+
+                  $scope.onOrderByChange = function() {
+                      $scope.onSortByChange();
+                  }
+
+                  $scope.sortFavList = function(arr, prop, asc) {
+                      arr = arr.sort(function(a, b) {
+                          if (asc) return (a.item[prop] > b.item[prop]);
+                          else return (b.item[prop] > a.item[prop]);
+                      });
+                      return arr;
+                  }
+
+              });
+
+
+        </script>
+    </head>
+    <body background="http://cs-server.usc.edu:45678/hw/hw8/images/background.png" ng-app="stock" ng-controller="stock-controller">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12" style="text-align: center;">
+                    <h6>Stock Market Search</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <form name="tickerForm" id="needs-validation" novalidate>
+                        <div class="form-group row">
+                            <div class="col-sm-3 ">
+                                <label for="symbol" class="col-form-label form-control-sm"><strong>Enter Stock Ticker Symbol:<span class="text-danger">*</spam></strong></label>
+                            </div>
+                            <div class="col-sm-5 typeahead-demo">
+                                <input type="text" name="symbol" id="symbol" ng-model="symbol" typeahead-show-hint="false" typeahead-wait-ms="200" uib-typeahead="autoCompleteData as autoCompleteData.Name for autoCompleteData in searchAutoCompleteSymbol() | filter:$viewValue | limitTo:8" typeahead-on-select="onSelectAutoComplete($item)"  class="form-control" ng-change="onSymbolChange()" placeholder = "e.g AAPL" required>
+                                <div ng-if="invalid" class="invalid-feedback" style="text-align: left;font-size: small;color: black;">
+                                   {{error_message}}
+                                </div>
+                                <br>
+                            </div>
+                            <div class="col-sm-4">
+                                <button ng-click="submit()" class="btn btn-primary btn-sm" ng-disabled="invalid">
+                                    <span class="fa fa-search"></span>
+                                    Get Quote
+                                </button>
+                                <button class="btn btn-light btn-sm" type="reset" ng-click="clear(tickerForm)">
+                                    <span class="fa fa-refresh"></span>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr style="background-color:white;width: 90%;height: 1px;">
+        <div class="container fav-list-container" ng-hide="!displayFavoriteSection">
+            <div class="card">
+                <div class="card-header" style="padding-bottom: 0px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <strong>Favorite List </strong>
+                            <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                                <label class="d-none d-sm-block" style="margin-bottom: 0px;">
+                                    Automatic refresh
+                                </label>
+                                <label ng-click="onAutoRefresh()" style="margin-bottom: 0px;">
+                                    <input type="checkbox" data-toggle="toggle" data-size="small" ng-model="autoRefresh">
+                                </label>
+                                <button class="btn btn-light btn-sm" ng-click="onRefresh()">
+                                    <span class="fa fa-refresh"></span>
+                                </button>
+                                <button class="btn btn-light btn-sm" ng-click="displayStockDetal()" ng-disabled="favList.length < 1">
+                                    <span class="fa fa-angle-right"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form class="row">
+                        <div class="form-row align-items-center">
+                            <div class="col-sm-3 col-md-2">
+                                <label class="mr-sm-2" for="sortBy"><strong>Sort by</strong></label>
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="sortBy" ng-change="onSortByChange()" ng-model="sortBy">
+                                    <option value="0">Default</option>
+                                    <option value="1">Symbol</option>
+                                    <option value="2">Price</option>
+                                    <option value="3">Change</option>
+                                    <option value="4">Change Percentage</option>
+                                    <option value="5">Volume</option>
+                                </select>
+                            </div>
+                            <div class="d-none d-sm-block col-md-1">
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+                                <label class="mr-sm-2" for="orderBy"><strong>Order by</strong></label>
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="orderBy" ng-change="onOrderByChange()" ng-model="orderBy" ng-disabled="disableOrderBy">
+                                    <option value="0">Ascending</option>
+                                    <option value="1">Descending</option>
+                                </select>
+                            </div>
+                        </div>
+                      </form>
+                      <br>
+                      <div class="table-responsive">
+                          <table class="table table-striped">
+                              <tr>
+                                  <td><strong>Symbol</strong></td>
+                                  <td><strong>Stock Price</strong></td>
+                                  <td><strong>Change(Change Percent)</strong></td>
+                                  <td><strong>Volume</strong></td>
+                                  <td></td>
+                              </tr>
+                             <tr ng-repeat="fav in favList">
+                                  <td><a class="favLink" ng-click="loadStockDetail(fav.item.symbol)">{{fav.item.symbol}}</a></td>
+                                  <td>{{fav.item.price | number:2}}</td>
+                                  <td style="color:{{fav.item.color}}">{{fav.item.change | number:2}} ({{fav.item.changePercent | number:2}} %) <img style="width:15px" src="{{fav.item.url}}"/></td>
+                                  <td>{{fav.item.volume | number:0}}</td>
+                                  <td>
+                                      <button  ng-click="deleteFavItem(fav.item.symbol)"  class="btn btn-light btn-sm">
+                                          <span class="fa fa-trash"></span>
+                                      </button>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="container stock-detail-container" ng-hide="!displayStockDetailSection">
+            <div class="card">
+                <div class="card-header" style="padding-bottom: 0px;">
+                    <div class="row">
+                        <div class="col-sm-2 col-2">
+                            <button class="btn btn-light btn-sm" ng-click="displayFavoriteList()">
+                                <span class="fa fa-angle-left"></span>
+                            </button>
+                        </div>
+                        <div class="col-sm-10 col-10" style="text-align: center;">
+                            <h6>Stock Details</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                  <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item d-none d-sm-block">
+                      <a class="nav-link active" href="#currentStock" role="tab" data-toggle="tab"><span class="fa fa-dashboard"></span> Current Stock</a>
+                    </li>
+                    <li class="nav-item d-none d-sm-block">
+                      <a class="nav-link" href="#buzz" role="tab" data-toggle="tab"><span class="fa fa-bar-chart"></span> Historical Charts</a>
+                    </li>
+                    <li class="nav-item d-none d-sm-block">
+                      <a class="nav-link" href="#references" role="tab" data-toggle="tab"><span class="fa fa-link"></span> News Feeds</a>
+                    </li>
+                    <li class="nav-item d-block d-sm-none">
+                      <a class="nav-link active" href="#currentStock" role="tab" data-toggle="tab"><span class="fa fa-dashboard"></span> Stock</a>
+                    </li>
+                    <li class="nav-item d-block d-sm-none">
+                      <a class="nav-link" href="#buzz" role="tab" data-toggle="tab"><span class="fa fa-bar-chart"></span>Charts</a>
+                    </li>
+                    <li class="nav-item d-block d-sm-none">
+                      <a class="nav-link" href="#references" role="tab" data-toggle="tab"><span class="fa fa-link"></span> News</a>
+                    </li>
+                  </ul>
+                  <hr style="width: 100%;height: 1px;">
+                  <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="currentStock">
+                        <br>
+                        <div class = "row">
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-9 col-8">
+                                        <h6>Stock Detail</h6>
+                                    </div>
+                                    <div class="col-sm-3 col-4">
+                                        <button class="btn btn-light btn-sm" ng-if="stockDetail.currentStock.item.isFavorite == false || (stockDetail.disableStar)" ng-click="addFavItem(stockDetail.currentStock.item)" ng-disabled="stockDetail.disableStar">
+                                            <span class="fa fa-star-o"></span>
+                                        </button>
+                                        <button class="btn btn-light btn-sm" ng-if="stockDetail.currentStock.item.isFavorite" ng-click="deleteFavItem(stockDetail.currentStock.item)">
+                                            <span class="fa fa-star" style="color: yellow;"></span>
+                                        </button>
+                                        <button class="btn btn-light btn-sm" ng-click="onFaceBookShare()" ng-disabled="stockDetail.disableFb">
+                                            <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="12">
+                                        </button>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="progress" ng-if="stockDetail.displayStockProgress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                    <br>
+                                </div>
+                                <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayStockError">
+                                    Error! Failed to get current stock data.
+                                </div>
+                                <table class="table table-striped" ng-if="stockDetail.displayStockDetail">
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Stock Ticker Symbol</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.symbol}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Last Price</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.lastPrice | number:2}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Change (Change Percent)</strong></td>
+                                        <td class="col-sm-6 col-6" style="color: {{stockDetail.currentStock.item.color}}"> {{stockDetail.currentStock.item.change | number:2}} ( {{stockDetail.currentStock.item.changePercent | number:2}} % ) <img src="{{stockDetail.currentStock.item.url}}" style="width: 5%"></td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Timestamp</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.timestamp}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Open</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.open | number:2}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Close</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.close | number:2}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Day's Range</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.rangeStart | number:2}} - {{stockDetail.currentStock.item.rangeClose | number:2}}</td>
+                                    </tr>
+                                    <tr class="row">
+                                        <td class="col-sm-6 col-6"><strong>Volume</strong></td>
+                                        <td class="col-sm-6 col-6">{{stockDetail.currentStock.item.volume | number:0}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-sm-6">
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                      <a class="nav-link active" href="#price" role="tab" data-toggle="tab"" ng-click="setActive('Price')" href="#price">Price</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#SMA" role="tab" data-toggle="tab" ng-click="setActive('SMA')">SMA</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#EMA" role="tab" data-toggle="tab" ng-click="setActive('EMA')">EMA</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#STOCH" role="tab" data-toggle="tab" ng-click="setActive('STOCH')">STOCH</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#RSI" role="tab" data-toggle="tab" ng-click="setActive('RSI')">RSI</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#ADX" role="tab" data-toggle="tab" ng-click="setActive('ADX')">ADX</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#CCI" role="tab" data-toggle="tab" ng-click="setActive('CCI')">CCI</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#BBANDS" role="tab" data-toggle="tab" ng-click="setActive('BBANDS')">BBANDS</a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a class="nav-link" href="#MACD" role="tab" data-toggle="tab" ng-click="setActive('MACD')">MACD</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="price">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayPriceProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayPriceDetail">
+                                            <hc-chart options="chartOptionsPrice">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayPriceError">
+                                          Error! Failed to get Price data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="SMA">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displaySMAProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displaySMADetail">
+                                            <hc-chart options="chartOptionsSMA">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displaySMAError">
+                                          Error! Failed to get SMA data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="EMA">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayEMAProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayEMADetail">
+                                            <hc-chart options="chartOptionsEMA">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayEMAError">
+                                          Error! Failed to get EMA data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="STOCH">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displaySTOCHProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displaySTOCHDetail">
+                                            <hc-chart options="chartOptionsSTOCH">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displaySTOCHError">
+                                          Error! Failed to get STOCH data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="RSI">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayRSIProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayRSIDetail">
+                                            <hc-chart options="chartOptionsRSI">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayRSIError">
+                                          Error! Failed to get RSI data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="ADX">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayADXProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayADXDetail">
+                                            <hc-chart options="chartOptionsADX">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayADXError">
+                                          Error! Failed to get ADX data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="CCI">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayCCIProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayCCIDetail">
+                                            <hc-chart options="chartOptionsCCI">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayCCIError">
+                                          Error! Failed to get CCI data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="BBANDS">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayBBANDSProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayBBANDSDetail">
+                                            <hc-chart options="chartOptionsBBANDS">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayBBANDSError">
+                                          Error! Failed to get BBANDS data.
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="MACD">
+                                        <br>
+                                        <div class="progress" ng-if="stockDetail.displayMACDProgress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                            <br>
+                                        </div>
+                                        <div ng-if="stockDetail.displayMACDDetail">
+                                            <hc-chart options="chartOptionsMACD">Placeholder for generic chart</hc-chart>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayMACDError">
+                                          Error! Failed to get MACD data.
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="buzz">
+                        <br>
+                        <div class="progress" ng-if="stockDetail.displayHistoricChartProgress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            <br>
+                        </div>
+                        <div ng-if="stockDetail.displayHistoricChartDetail">
+                            <hc-stock options="chartOptionsHistoricChart">Placeholder for generic chart</hc-stock>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayHistoricChartError">
+                            Error! Failed to get Historical data.
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="references">
+                        <br>
+                        <div class="progress" ng-if="stockDetail.displayNewsProgress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            <br>
+                        </div>
+                        <div ng-if="stockDetail.displayNewsDetail">
+                            <div class="card bg-light mb-3" ng-repeat="item in stockDetail.newsList">
+                                <div class="card-body">
+                                  <h5 class="card-title"><a href="{{item.link}}" target="_blank">{{item.title}}</a></h5>
+                                  <p class="card-text">
+                                      <br>
+                                      Author: {{item.author}}
+                                      <br>
+                                      Date: {{item.pubDate}} EDT
+                                  </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" ng-if="stockDetail.displayNewsError">
+                            Error! Failed to get News data.
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+          app.directive('hcChart', function () {
+                return {
+                    restrict: 'E',
+                    template: '<div></div>',
+                    replace: true,
+                    scope: {
+                        options: '='
+                    },
+                    link: function (scope, element) {
+                        Highcharts.chart(element[0], scope.options);
+                    }
+                };
+              });
+          app.directive('hcStock', function () {
+                return {
+                    restrict: 'E',
+                    template: '<div></div>',
+                    replace: true,
+                    scope: {
+                        options: '='
+                    },
+                    link: function (scope, element) {
+                        Highcharts.stockChart(element[0], scope.options);
+                    }
+                };
+              });
+        </script>
+    </body>
+</html>
